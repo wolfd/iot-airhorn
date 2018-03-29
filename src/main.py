@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request
 import RPi.GPIO as GPIO
 import atexit
@@ -20,8 +21,8 @@ def cleanup_gpio():
 
 @app.route('/')
 def index():
-    return 'what'
-    #app.send_static_file('index.html')
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    app.send_static_file(os.path.join(dir_path, 'index.html'))
 
 @app.route('/notify')
 def notify():
