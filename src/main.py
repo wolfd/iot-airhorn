@@ -22,8 +22,9 @@ def cleanup_gpio():
 @app.route('/')
 def index():
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    return os.path.join(os.path.abspath(dir_path), 'index.html')
-    # app.send_static_file(os.path.join(os.path.abspath(dir_path), 'index.html'))
+    full_path_to_index = os.path.join(os.path.abspath(dir_path), 'index.html')
+
+    return app.send_static_file(full_path_to_index)
 
 @app.route('/notify')
 def notify():
