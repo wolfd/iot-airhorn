@@ -7,20 +7,25 @@
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<style type="text/css">
-		
+		#honk-if-you-gottem {
+			width: 50%;
+			height: 50%;
+		}
 	</style>
 </head>
 <body id="root">
 	<script type="text/javascript">
 		function sendNotify() {
-			xhttp.open("GET", "/notify?duration=" + duration, true);
+			let xhttp = new XMLHttpRequest();
+			xhttp.open("GET", "/notify", true);
 			xhttp.send();
 		}
 		function endNotify() {
+			let xhttp = new XMLHttpRequest();
 			xhttp.open("GET", "/stop", true);
 			xhttp.send();
 		}
 	</script>
-	<button onmousedown="sendNotify" onmouseup="endNotify"></button>
+	<button id="honk-if-you-gottem" onmousedown="sendNotify" onmouseup="endNotify">Honk</button>
 </body>
 </html>
