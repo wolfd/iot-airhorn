@@ -8,24 +8,78 @@
 	<![endif]-->
 	<style type="text/css">
 		#honk-if-you-gottem {
-			width: 50%;
-			height: 50%;
+			-moz-box-shadow:inset 0px -3px 3px 0px #cf866c;
+			-webkit-box-shadow:inset 0px -3px 3px 0px #cf866c;
+			box-shadow:inset 0px -3px 3px 0px #cf866c;
+			background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #d0451b), color-stop(1, #bc3315));
+			background:-moz-linear-gradient(top, #d0451b 5%, #bc3315 100%);
+			background:-webkit-linear-gradient(top, #d0451b 5%, #bc3315 100%);
+			background:-o-linear-gradient(top, #d0451b 5%, #bc3315 100%);
+			background:-ms-linear-gradient(top, #d0451b 5%, #bc3315 100%);
+			background:linear-gradient(to bottom, #d0451b 5%, #bc3315 100%);
+			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#d0451b', endColorstr='#bc3315',GradientType=0);
+			background-color:#d0451b;
+			-moz-border-radius:42px;
+			-webkit-border-radius:42px;
+			border-radius:42px;
+			border:4px solid #942911;
+			display:inline-block;
+			cursor:pointer;
+			color:#ffffff;
+			font-family:Arial;
+			font-size:18px;
+			padding:32px 45px;
+			text-decoration:none;
+			text-shadow:0px 1px 2px #854629;
+		}
+		#honk-if-you-gottem:hover {
+			background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bc3315), color-stop(1, #d0451b));
+			background:-moz-linear-gradient(top, #bc3315 5%, #d0451b 100%);
+			background:-webkit-linear-gradient(top, #bc3315 5%, #d0451b 100%);
+			background:-o-linear-gradient(top, #bc3315 5%, #d0451b 100%);
+			background:-ms-linear-gradient(top, #bc3315 5%, #d0451b 100%);
+			background:linear-gradient(to bottom, #bc3315 5%, #d0451b 100%);
+			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bc3315', endColorstr='#d0451b',GradientType=0);
+			background-color:#bc3315;
+		}
+		#honk-if-you-gottem:active {
+			position:relative;
+			top:1px;
 		}
 	</style>
 </head>
 <body id="root">
 	<script type="text/javascript">
-		function sendNotify() {
-			let xhttp = new XMLHttpRequest();
-			xhttp.open("GET", "/notify", true);
-			xhttp.send();
-		}
+		let isNotifying = false;
+
 		function endNotify() {
-			let xhttp = new XMLHttpRequest();
-			xhttp.open("GET", "/stop", true);
-			xhttp.send();
+			let request = new XMLHttpRequest();
+			request.open("GET", "/stop", true);
+			request.addEventListener("error", function() {
+				console.log('got error while trying to stop');
+			});
+			request.addEventListener("load", function() {
+				isNotifying = true;
+			})
+			request.send();
+		}
+
+		function sendNotify() {
+			if (isNotifying) {
+				console.log('not sending double notify');
+				return;
+			}
+			let request = new XMLHttpRequest();
+			request.open("GET", "/notify", true);
+			request.addEventListener("error", function() {
+				endNotify();
+			});
+			request.addEventListener("load", function() {
+				isNotifying = true;
+			});
+			request.send();
 		}
 	</script>
-	<button id="honk-if-you-gottem" onmousedown="sendNotify()" onmouseup="endNotify()">Honk</button>
+	<a href="#" id="honk-if-you-gottem" onmousedown="sendNotify()" onmouseup="endNotify()">Notify</a>
 </body>
 </html>
