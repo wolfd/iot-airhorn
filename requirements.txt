@@ -1,2 +1,2 @@
 Flask==0.10.1
-pigpio==1.40.post1
+RPi.GPIO==0.6.3
