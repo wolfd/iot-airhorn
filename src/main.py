@@ -14,6 +14,10 @@ def setup_gpio():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(ACTUATOR_CHANNEL, GPIO.OUT)
 
+def cleanup_gpio():
+    GPIO.cleanup()
+
+
 @app.route('/')
 def index():
     return 'what'
@@ -37,16 +41,14 @@ def notify():
 
 @app.route('/stop')
 def stop():
-    return 'stopped'
     # stop doing pwm and clear reference
     if pwm[ACTUATOR_CHANNEL] is None:
         return 'not doing anything', 400
     pwm[ACTUATOR_CHANNEL].stop()
     pwm[ACTUATOR_CHANNEL] = None
-    
 
-def cleanup_gpio():
-    GPIO.cleanup()
+    return 'stopped'
+
 
 if __name__ == '__main__':
     setup_gpio()
