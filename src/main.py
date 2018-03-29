@@ -1,5 +1,7 @@
 import os
-from flask import Flask, request
+from flask import Flask
+from flask import render_template
+from flask import request
 import RPi.GPIO as GPIO
 import atexit
 
@@ -21,13 +23,11 @@ def cleanup_gpio():
 
 @app.route('/')
 def index():
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    full_path_to_index = os.path.join(os.path.abspath(dir_path), 'index.html')
-
-    return app.send_static_file(full_path_to_index)
+    return render_template('index.html')
 
 @app.route('/notify')
 def notify():
+    # unused right now but I'm not going to remove it
     str_duration = request.args.get('duration', '1')
     try:
         duration = float(str_duration)
