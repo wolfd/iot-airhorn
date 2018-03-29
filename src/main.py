@@ -1,5 +1,4 @@
 from flask import Flask, request
-from flask.ext.api import status
 import pigpio
 import atexit
 
@@ -17,7 +16,7 @@ def notify():
         duration = float(str_duration)
     except ValueError:
         content = {'error': 'duration is not a number'}
-        return content, status.HTTP_400_BAD_REQUEST
+        return content, 400
     # gpio here
 
     return "honk"
