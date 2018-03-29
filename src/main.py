@@ -16,7 +16,8 @@ def setup_gpio():
 
 @app.route('/')
 def index():
-    return app.send_static_file('index.html')
+    return 'what'
+    #app.send_static_file('index.html')
 
 @app.route('/notify')
 def notify():
@@ -49,4 +50,4 @@ def cleanup_gpio():
 
 if __name__ == '__main__':
     atexit.register(cleanup_gpio)
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=80, debug=True)
