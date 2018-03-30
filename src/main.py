@@ -3,7 +3,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 import RPi.GPIO as GPIO
-import atexit
+import signal
 
 SERVO_PIN = 18  # BCM pin
 FREQUENCY = 50.0  # hz
@@ -61,5 +61,6 @@ def stop():
 
 if __name__ == '__main__':
     setup_gpio()
-    atexit.register(cleanup_gpio)
+    original_sigint = signal.getsignal(signal.SIGINT)
+    signal.signal(signal.SIGINT, cleanup_gpio)
     app.run(host='0.0.0.0', port=80, debug=True)
