@@ -2,11 +2,11 @@ import os
 from flask import Flask
 from flask import render_template
 from flask import request
-import RPi.GPIO as GPIO
+import wiringpi
 import signal
 
 SERVO_PIN = 18  # BCM pin
-FREQUENCY = 50.0  # hz
+FREQUENCY = 50 # hz
 SINGLE_CYCLE = 1000.0 / FREQUENCY  # ms
 OFF_DUTY_CYCLE = (1.0 / SINGLE_CYCLE) * 100.0  # %
 ON_DUTY_CYCLE = (2.1 / SINGLE_CYCLE) * 100.0  # %
@@ -19,10 +19,11 @@ pwm = {
 is_notifying = False
 
 def setup_gpio():
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(SERVO_PIN, GPIO.OUT)
-    pwm[SERVO_PIN] = GPIO.PWM(SERVO_PIN, FREQUENCY)
-    pwm[SERVO_PIN].start(OFF_DUTY_CYCLE)
+    wiringpi.wiringPiSetupGpio()
+    wiringpi.pinMode(SERVO_PIN, wiringpi.GPIO.PWM_OUTPUT)
+    wiringpi.pwmSetMode(wiringpi.GPIO.PWM_MODE_MS)
+    wiringpi.pwmSetClock(192)
+    wiringpi.pwmSetRange(2000)
 
 def cleanup_gpio():
     pwm[SERVO_PIN].stop()
@@ -45,7 +46,7 @@ def notify():
     if is_notifying is True:
         return 'already doing something', 400
 
-    pwm[SERVO_PIN].ChangeDutyCycle(ON_DUTY_CYCLE)
+    wiringpi.pwmWrite(SERVO_PIN, 100)
 
     return 'honk'
 
@@ -53,7 +54,7 @@ def notify():
 @app.route('/stop')
 def stop():
     # stop doing pwm and clear reference
-    pwm[SERVO_PIN].ChangeDutyCycle(OFF_DUTY_CYCLE)
+    wiringpi.pwmWrite(SERVO_PIN, 210)
     is_notifying = False
 
     return 'stopped'
