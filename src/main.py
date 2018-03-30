@@ -5,19 +5,25 @@ from flask import request
 import RPi.GPIO as GPIO
 import atexit
 
-ACTUATOR_CHANNEL = 12
+SERVO_PIN = 18  # BCM pin
+FREQUENCY = 50.0  # hz
+SINGLE_CYCLE = 1000.0 / FREQUENCY  # ms
+OFF_DUTY_CYCLE = 1.0 / SINGLE_CYCLE  # %
+ON_DUTY_CYCLE = 2.1 / SINGLE_CYCLE
 
 app = Flask(__name__)
 
-pwm = {
-    ACTUATOR_CHANNEL: None
-}
+servo = None
+is_notifying = False
 
 def setup_gpio():
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(ACTUATOR_CHANNEL, GPIO.OUT)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(SERVO_PIN, GPIO.OUT)
+    servo = GPIO.PWM(SERVO_PIN, FREQUENCY)
+    servo.start(OFF_DUTY_CYCLE)
 
 def cleanup_gpio():
+    servo.stop()
     GPIO.cleanup()
 
 
@@ -34,21 +40,19 @@ def notify():
     except ValueError:
         return 'duration is not a number', 400
     # start pwming and store global
-    if pwm[ACTUATOR_CHANNEL] is not None:
+    if is_notifying is True:
         return 'already doing something', 400
-    p = GPIO.PWM(ACTUATOR_CHANNEL, 0.5)
-    p.start(1)
-    pwm[ACTUATOR_CHANNEL] = p
+
+    servo.ChangeDutyCycle(ON_DUTY_CYCLE)
 
     return 'honk'
+
 
 @app.route('/stop')
 def stop():
     # stop doing pwm and clear reference
-    if pwm[ACTUATOR_CHANNEL] is None:
-        return 'not doing anything', 400
-    pwm[ACTUATOR_CHANNEL].stop()
-    pwm[ACTUATOR_CHANNEL] = None
+    servo.ChangeDutyCycle(OFF_DUTY_CYCLE)
+    is_notifying = False
 
     return 'stopped'
 
