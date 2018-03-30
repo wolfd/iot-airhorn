@@ -6,4 +6,4 @@ _The Internet of Things_
 
 (a hack)
 
-!(IoT-airhorn.jpg)["Finished" airhorn]
+!["Finished" airhorn](IoT-airhorn.jpg)
