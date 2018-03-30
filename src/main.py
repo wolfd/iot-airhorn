@@ -8,8 +8,8 @@ import atexit
 SERVO_PIN = 18  # BCM pin
 FREQUENCY = 50.0  # hz
 SINGLE_CYCLE = 1000.0 / FREQUENCY  # ms
-OFF_DUTY_CYCLE = 1.0 / SINGLE_CYCLE  # %
-ON_DUTY_CYCLE = 2.1 / SINGLE_CYCLE
+OFF_DUTY_CYCLE = (1.0 / SINGLE_CYCLE) * 100.0  # %
+ON_DUTY_CYCLE = (2.1 / SINGLE_CYCLE) * 100.0  # %
 
 app = Flask(__name__)
 
