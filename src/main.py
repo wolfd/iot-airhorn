@@ -13,17 +13,19 @@ ON_DUTY_CYCLE = 2.1 / SINGLE_CYCLE
 
 app = Flask(__name__)
 
-servo = None
+pwm = {
+    SERVO_PIN: None
+}
 is_notifying = False
 
 def setup_gpio():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(SERVO_PIN, GPIO.OUT)
-    servo = GPIO.PWM(SERVO_PIN, FREQUENCY)
-    servo.start(OFF_DUTY_CYCLE)
+    pwm[SERVO_PIN] = GPIO.PWM(SERVO_PIN, FREQUENCY)
+    pwm[SERVO_PIN].start(OFF_DUTY_CYCLE)
 
 def cleanup_gpio():
-    servo.stop()
+    pwm[SERVO_PIN].stop()
     GPIO.cleanup()
 
 
@@ -43,7 +45,7 @@ def notify():
     if is_notifying is True:
         return 'already doing something', 400
 
-    servo.ChangeDutyCycle(ON_DUTY_CYCLE)
+    pwm[SERVO_PIN].ChangeDutyCycle(ON_DUTY_CYCLE)
 
     return 'honk'
 
@@ -51,7 +53,7 @@ def notify():
 @app.route('/stop')
 def stop():
     # stop doing pwm and clear reference
-    servo.ChangeDutyCycle(OFF_DUTY_CYCLE)
+    pwm[SERVO_PIN].ChangeDutyCycle(OFF_DUTY_CYCLE)
     is_notifying = False
 
     return 'stopped'
